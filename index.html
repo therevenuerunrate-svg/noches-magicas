@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Noches Mágicas 2026 — Hotel La Farm</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  --navy:#222D63;--navy-dark:#1A2050;--navy-mid:#2A3570;
+  --blue:#5762A5;--orange:#E8533A;--salmon:#E7895E;
+  --green:#00C170;--green-bg:rgba(0,193,112,.13);
+  --red:#E8533A;--red-bg:rgba(232,83,58,.13);
+  --amber:#C4900A;--amber-bg:rgba(196,144,10,.13);
+  --white:#FFFFFF;--muted:#8090B0;--border:rgba(255,255,255,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--navy-dark);font-family:Arial,sans-serif;color:var(--white);min-height:100vh}
+.hdr{background:var(--navy);border-bottom:3px solid var(--orange);padding:16px 32px;display:flex;align-items:center;justify-content:space-between}
+.hdr-logo{font-size:10px;font-weight:700;color:var(--salmon);letter-spacing:1.5px}
+.hdr-title{font-size:19px;font-weight:700}
+.hdr-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.badge-src{font-size:10px;color:var(--muted);background:var(--navy-mid);padding:5px 14px;border-radius:20px;border:1px solid var(--border);text-align:right;line-height:1.8}
+.main{padding:22px 32px;max-width:1400px;margin:0 auto}
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:13px;margin-bottom:22px}
+.kpi{background:var(--navy-mid);border:1px solid var(--border);border-radius:12px;padding:15px 17px;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--orange)}
+.kpi.g::before{background:var(--green)}.kpi.a::before{background:var(--amber)}
+.kpi-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}
+.kpi-val{font-size:28px;font-weight:700;line-height:1}
+.kpi-sub{font-size:11px;margin-top:5px;color:var(--muted)}
+.kpi-sub.up{color:var(--green)}.kpi-sub.dn{color:var(--red)}
+.fbar{background:var(--navy-mid);border:1px solid var(--border);border-radius:12px;padding:14px 18px;display:flex;align-items:center;gap:18px;margin-bottom:22px;flex-wrap:wrap}
+.flbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;white-space:nowrap}
+select,input[type=date]{background:var(--navy);color:var(--white);border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:6px 11px;font-size:12px;font-family:Arial,sans-serif;cursor:pointer;outline:none}
+select:hover,input[type=date]:hover{border-color:var(--orange)}
+.fsep{width:1px;height:26px;background:var(--border)}
+.btn-r{background:transparent;color:var(--muted);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:6px 13px;font-size:11px;cursor:pointer}
+.btn-r:hover{border-color:var(--orange);color:var(--orange)}
+.fres{font-size:11px;color:var(--muted);margin-left:auto}
+.fres strong{color:var(--white)}
+.grid{display:grid;grid-template-columns:1fr 375px;gap:18px}
+.twrap{background:var(--navy-mid);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.twrap-hdr{padding:13px 17px;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border)}
+table{width:100%;border-collapse:collapse}
+thead th{background:var(--navy);padding:9px 11px;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;text-align:center;border-bottom:1px solid var(--border)}
+thead th:first-child{text-align:left}
+tbody tr{border-bottom:1px solid var(--border);transition:background .15s}
+tbody tr:hover{background:rgba(255,255,255,.04)}
+tbody tr.sc{opacity:.55}
+tbody td{padding:9px 11px;font-size:12px;text-align:center}
+tbody td:first-child{text-align:left}
+.top-art{color:var(--orange);font-weight:700}
+.sc-art{color:var(--muted);font-style:italic}
+.badge{display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:700;white-space:nowrap}
+.bg{background:var(--green-bg);color:var(--green)}
+.br{background:var(--red-bg);color:var(--red)}
+.ba{background:var(--amber-bg);color:var(--amber)}
+.bx{background:rgba(128,144,176,.1);color:var(--muted)}
+.bar-wrap{display:flex;align-items:center;gap:5px;justify-content:center}
+.bar-bg{width:50px;height:5px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;flex-shrink:0}
+.bar-fill{height:100%;border-radius:3px}
+.pill{font-size:11px;font-weight:700;padding:2px 6px;border-radius:11px;display:inline-block}
+.pill-up{color:var(--green);background:var(--green-bg)}
+.pill-dn{color:var(--red);background:var(--red-bg)}
+.pill-z{color:var(--muted);background:rgba(128,144,176,.1)}
+.side{display:flex;flex-direction:column;gap:14px}
+.sc-card{background:var(--navy-mid);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.sc-hdr{padding:11px 15px;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.sc-body{padding:14px}
+.ch-box{position:relative;height:200px}
+.ch-box-lg{position:relative;height:235px}
+.urg-item{display:flex;align-items:center;justify-content:space-between;padding:7px 9px;border-radius:8px;border-left:3px solid var(--red);background:var(--red-bg);font-size:11px;margin-bottom:6px}
+.urg-art{font-weight:700;font-size:11px}
+.urg-fecha{font-size:10px;color:var(--muted)}
+.snap-item{display:flex;align-items:center;justify-content:space-between;padding:7px 9px;border-radius:8px;background:rgba(255,255,255,.04);font-size:11px;margin-bottom:6px;cursor:pointer}
+.snap-item:hover{background:rgba(255,255,255,.08)}
+.snap-date{color:var(--muted)}
+.snap-val{font-weight:700}
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;gap:16px}
+.spinner{width:40px;height:40px;border:3px solid rgba(255,255,255,.1);border-top-color:var(--orange);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.error-msg{background:var(--red-bg);border:1px solid var(--red);border-radius:8px;padding:16px;margin:20px 0;font-size:13px}
+.footer{text-align:center;padding:18px;font-size:10px;color:var(--muted);border-top:1px solid var(--border);margin-top:28px}
+.footer a{color:var(--orange);text-decoration:none}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div>
+    <div class="hdr-logo">THE REVENUE RUN RATE</div>
+    <div class="hdr-title">🎶 Noches Mágicas de La Granja 2026</div>
+    <div class="hdr-sub">Hotel La Farm · Tracker de ventas · 31 Jul – 16 Ago · Capacidad: 16 hab/noche</div>
+  </div>
+  <div class="badge-src">
+    Última actualización: <strong id="lastUpdate" style="color:var(--white)">Cargando...</strong><br>
+    <span id="dataSrc" style="color:var(--muted);font-size:10px">⏳ Conectando con Google Sheets...</span>
+  </div>
+</div>
+
+<div class="main">
+  <div id="loadingBlock" class="loading">
+    <div class="spinner"></div>
+    <span style="color:var(--muted);font-size:13px">Cargando datos desde Google Sheets...</span>
+  </div>
+  <div id="mainContent" style="display:none">
+    <div class="kpi-row">
+      <div class="kpi g"><div class="kpi-lbl">Hab. confirmadas 2026</div><div class="kpi-val" id="kTotal">—</div><div class="kpi-sub up" id="kDelta">—</div></div>
+      <div class="kpi"><div class="kpi-lbl">Ocupación media actual</div><div class="kpi-val" id="kOcc">—</div><div class="kpi-sub" id="kOccRef">—</div></div>
+      <div class="kpi"><div class="kpi-lbl">Revenue confirmado 2026</div><div class="kpi-val" id="kRev">—</div><div class="kpi-sub" id="kRevRef">—</div></div>
+      <div class="kpi"><div class="kpi-lbl">ADR medio confirmado</div><div class="kpi-val" id="kADR">—</div><div class="kpi-sub" id="kADRRef">vs cierre 2025: —</div></div>
+      <div class="kpi a"><div class="kpi-lbl">Noches con señal 🔴</div><div class="kpi-val" id="kAlert">—</div><div class="kpi-sub dn">Requieren push de marketing</div></div>
+    </div>
+    <div class="fbar">
+      <div style="display:flex;align-items:center;gap:7px">
+        <span class="flbl">📅 Snapshot</span>
+        <select id="fSnap" onchange="applyFilters()"></select>
+      </div>
+      <div class="fsep"></div>
+      <div style="display:flex;align-items:center;gap:7px">
+        <span class="flbl">🎭 Tipo</span>
+        <select id="fTipo" onchange="applyFilters()">
+          <option value="todas">Todas las noches</option>
+          <option value="concierto">Solo con concierto</option>
+          <option value="sin">Sin concierto</option>
+          <option value="top">Artistas destacados</option>
+        </select>
+      </div>
+      <div class="fsep"></div>
+      <div style="display:flex;align-items:center;gap:7px">
+        <span class="flbl">🚦 Señal</span>
+        <select id="fSenal" onchange="applyFilters()">
+          <option value="todas">Todas</option>
+          <option value="verde">✅ Verde</option>
+          <option value="rojo">🔴 Rojo</option>
+          <option value="ambar">⚠️ Ámbar</option>
+        </select>
+      </div>
+      <div class="fsep"></div>
+      <div style="display:flex;align-items:center;gap:7px">
+        <span class="flbl">📆 Rango</span>
+        <input type="date" id="fIni" value="2026-07-31" min="2026-07-31" max="2026-08-16" onchange="applyFilters()">
+        <span style="color:var(--muted);font-size:11px">→</span>
+        <input type="date" id="fFin" value="2026-08-16" min="2026-07-31" max="2026-08-16" onchange="applyFilters()">
+      </div>
+      <button class="btn-r" onclick="resetFilters()">↩ Resetear</button>
+      <div class="fres">Mostrando <strong id="fCount">—</strong> noches</div>
+    </div>
+    <div class="grid">
+      <div class="twrap">
+        <div class="twrap-hdr">📋 Detalle por noche — Comparativa 2026 vs 2025</div>
+        <table>
+          <thead>
+            <tr>
+              <th style="width:85px">Fecha</th>
+              <th style="width:175px">Artista / Evento</th>
+              <th>Hab. 2026</th>
+              <th>Occ%</th>
+              <th>Hab. 2025</th>
+              <th>Δ vs 2025</th>
+              <th>Cierre 2025</th>
+              <th>% Llenado</th>
+              <th>Señal</th>
+            </tr>
+          </thead>
+          <tbody id="tBody"></tbody>
+        </table>
+      </div>
+      <div class="side">
+        <div class="sc-card">
+          <div class="sc-hdr">📈 Pick-up por noche <span style="font-size:9px">hab. confirmadas</span></div>
+          <div class="sc-body"><div class="ch-box-lg"><canvas id="chEv"></canvas></div></div>
+        </div>
+        <div class="sc-card">
+          <div class="sc-hdr">🔴 Push urgente <span id="urgCount" style="color:var(--red);font-size:10px"></span></div>
+          <div class="sc-body"><div id="urgList"></div></div>
+        </div>
+        <div class="sc-card">
+          <div class="sc-hdr">🕐 Histórico snapshots <span style="font-size:9px;color:var(--muted)">total hab.</span></div>
+          <div class="sc-body">
+            <div class="ch-box"><canvas id="chHist"></canvas></div>
+            <div id="snapList" style="margin-top:10px"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <strong style="color:var(--white)">The Revenue Run Rate</strong> ·
+  Revenue &amp; Profit Management ·
+  <a href="mailto:daniel@therevenuerunrate.com">daniel@therevenuerunrate.com</a> ·
+  <a href="https://therevenuerunrate.com">therevenuerunrate.com</a><br><br>
+  <em>Dashboard conectado a Google Sheets — se actualiza automáticamente al recargar la página.</em>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════════════
+// CONFIGURACIÓN — ID de tu Google Sheet (no cambia nunca)
+// ══════════════════════════════════════════════════════════════════════
+const PROXY_URL = "https://script.google.com/macros/s/AKfycbx0uPhKvAcdnw-s712_LgmsQsfsVgQTFJ9oZUVtGNWw2r1qxy-H1PjNZJMaY58Z_wDQVA/exec";
+
+// ── Constantes ─────────────────────────────────────────────────────────
+const CAP = 16;
+const ARTISTAS_TOP = new Set([
+  'El Monaguillo','Biharpa + Ara Malikian','Víctor Manuel',
+  'Rodrigo Cuevas + DJ','Luz Casal',
+  'Los Pajarracos + Medina Azahara','Valeria Castro'
+]);
+const SC_KEYWORDS = ['sin concierto'];
+
+// Estado global
+let SNAPSHOTS = {};
+let chEv = null, chHist = null;
+
+// ── HELPERS ────────────────────────────────────────────────────────────
+function isSC(a){ return SC_KEYWORDS.some(k=>a.toLowerCase().includes(k)); }
+function getSenal(n){
+  if(isSC(n.artista)) return 'grey';
+  return n.hab26>n.hab25?'verde':n.hab26<n.hab25?'rojo':'ambar';
+}
+function fmtDate(s){ const p=s.split('-'); return p[2]+'/'+p[1]; }
+function fmtPct(v){ return (v*100).toFixed(1)+'%'; }
+function parseNum(v){
+  if(v===null||v===undefined||v==='') return 0;
+  const n=parseFloat(String(v).replace(/[€$,.]/g,m=>m===','?'.':''));
+  return isNaN(n)?0:n;
+}
+
+// ── PARSEAR CSV ────────────────────────────────────────────────────────
+function parseCSV(text){
+  const lines = text.trim().split('\n');
+  if(lines.length < 2) return [];
+  // Detectar fila de cabecera (fila 6 = índice 5)
+  // Buscamos la fila que contenga "Dia" o "Artista"
+  let headerIdx = 0;
+  for(let i=0;i<Math.min(lines.length,10);i++){
+    if(lines[i].toLowerCase().includes('artista')||lines[i].toLowerCase().includes('dia')){
+      headerIdx = i; break;
+    }
+  }
+  const headers = lines[headerIdx].split(',').map(h=>h.trim().replace(/^"|"$/g,'').toLowerCase());
+  const rows = [];
+  for(let i=headerIdx+1;i<lines.length;i++){
+    const vals = lines[i].match(/(".*?"|[^,]+)(?=,|$)/g)||[];
+    const obj = {};
+    headers.forEach((h,j)=>{
+      obj[h] = (vals[j]||'').replace(/^"|"$/g,'').trim();
+    });
+    if(obj['fecha 2026']||obj['fecha26']||obj['c']||vals[1]) rows.push(obj);
+  }
+  return rows;
+}
+
+// ── CONVERTIR FILA CSV A OBJETO NOCHE ──────────────────────────────────
+function rowToNoche(row, headers){
+  // Mapear columnas por posición si los headers no son claros
+  // Estructura: B=dia26 C=fecha26 D=artista E=hab26 F=adr26 G=rev26
+  //             H=dia25 I=fecha25 J=hab25 K=adr25 L=rev25 M=cierre25 N=adrcierre25
+  const keys = Object.keys(row);
+  const vals = Object.values(row);
+
+  // Intentar por nombre de columna primero
+  const fecha26Raw = row['fecha 2026']||row['fecha26']||vals[1]||'';
+  const artista    = row['artista']||vals[2]||'';
+  const hab26      = parseNum(row['hab26']||vals[3]);
+  const adr26      = parseNum(row['adr26']||vals[4]);
+  const rev26      = parseNum(row['revenue26']||row['rev26']||vals[5]);
+  const hab25      = parseNum(row['hab25']||vals[8]);
+  const adr25      = parseNum(row['adr25']||vals[9]);
+  const rev25      = parseNum(row['revenue25']||row['rev25']||vals[10]);
+  const cierre25   = parseNum(row['cierre25']||vals[11]);
+  const adrC25     = parseNum(row['adrcierre25']||row['adr cierre25']||vals[12]);
+  const dsem       = row['dia']||row['día']||vals[0]||'';
+
+  // Parsear fecha
+  let fechaStr = '';
+  if(fecha26Raw instanceof Date){
+    const d=fecha26Raw;
+    fechaStr=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  } else {
+    const s = String(fecha26Raw).trim();
+    // Formato DD/MM/YYYY
+    const m1 = s.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+    if(m1) fechaStr=`${m1[3]}-${m1[2].padStart(2,'0')}-${m1[1].padStart(2,'0')}`;
+    // Formato YYYY-MM-DD
+    else if(s.match(/\d{4}-\d{2}-\d{2}/)) fechaStr=s.slice(0,10);
+    // Número de serie de Excel/Sheets
+    else if(/^\d+$/.test(s)){
+      const d=new Date((parseInt(s)-25569)*86400000);
+      fechaStr=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    }
+  }
+
+  if(!fechaStr||!artista) return null;
+
+  return { fecha:fechaStr, dsem, artista, hab26, adr26, rev26, hab25, adr25, rev25, cierre25, adrC25 };
+}
+
+// ── CARGAR DATOS DESDE GOOGLE SHEETS ──────────────────────────────────
+async function loadFromSheets(){
+  try {
+    document.getElementById('dataSrc').innerHTML = '⏳ Conectando con Google Sheets...';
+    const res = await fetch(PROXY_URL);
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const data = await res.json();
+
+    if(!data||typeof data !== 'object') throw new Error('Respuesta inesperada del servidor');
+
+    const snapKeys = Object.keys(data);
+    if(!snapKeys.length) throw new Error('No se encontraron snapshots en la hoja');
+
+    SNAPSHOTS = data;
+
+    const latest = snapKeys[snapKeys.length-1];
+    document.getElementById('lastUpdate').textContent = latest;
+    document.getElementById('dataSrc').innerHTML = '🟢 En directo · Google Sheets';
+    document.getElementById('dataSrc').style.color = 'var(--green)';
+    return true;
+
+  } catch(e) {
+    console.error('Error cargando desde proxy:', e);
+    document.getElementById('dataSrc').innerHTML = '🔴 Error de conexión: '+e.message;
+    document.getElementById('dataSrc').style.color = 'var(--red)';
+    const main = document.getElementById('mainContent');
+    main.innerHTML = `<div class="error-msg">
+      <strong>⚠️ No se pudieron cargar los datos desde Google Sheets.</strong><br><br>
+      Error: ${e.message}<br><br>
+      Recarga la página e inténtalo de nuevo. Si el problema persiste,
+      comprueba que el script de Apps Script está publicado correctamente.
+    </div>`;
+    main.style.display = 'block';
+    return false;
+  }
+}
+
+// ── RENDER TABLA ────────────────────────────────────────────────────────
+function renderTable(data){
+  const tb = document.getElementById('tBody');
+  tb.innerHTML='';
+  data.forEach(n=>{
+    const sc   = isSC(n.artista);
+    const top  = ARTISTAS_TOP.has(n.artista);
+    const s    = getSenal(n);
+    const delta= n.hab26-n.hab25;
+    const occ  = n.hab26/CAP;
+    const pct  = n.cierre25>0?n.hab26/n.cierre25:0;
+    const bc   = occ>=.75?'var(--green)':occ>=.5?'var(--amber)':'var(--red)';
+    const bCls = s==='verde'?'bg':s==='rojo'?'br':s==='ambar'?'ba':'bx';
+    const bIco = s==='verde'?'✅':s==='rojo'?'🔴':s==='ambar'?'⚠️':'—';
+    const bTxt = sc?'sin concierto':s==='verde'?'+'+delta+' vs 2025':s==='rojo'?delta+' vs 2025':'= 2025';
+    const dCls = delta>0?'pill-up':delta<0?'pill-dn':'pill-z';
+    const dTxt = delta>0?'+'+delta:String(delta);
+    const tr   = document.createElement('tr');
+    if(sc) tr.classList.add('sc');
+    tr.innerHTML=`
+      <td style="font-size:11px;color:var(--muted)">${fmtDate(n.fecha)} <span style="font-size:10px">${n.dsem}</span></td>
+      <td class="${top?'top-art':sc?'sc-art':''}" style="text-align:left;font-size:11.5px">${n.artista}</td>
+      <td><div class="bar-wrap"><span style="color:${bc};font-weight:700;font-size:12px;min-width:14px">${n.hab26}</span><div class="bar-bg"><div class="bar-fill" style="width:${Math.min(occ*100,100)}%;background:${bc}"></div></div><span style="font-size:10px;color:var(--muted)">${Math.round(occ*100)}%</span></div></td>
+      <td style="font-size:11px;color:var(--muted)">${fmtPct(occ)}</td>
+      <td style="color:var(--muted)">${n.hab25}</td>
+      <td><span class="pill ${dCls}">${dTxt}</span></td>
+      <td style="color:var(--muted)">${n.cierre25}</td>
+      <td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:${Math.min(pct*100,100)}%;background:var(--blue)"></div></div><span style="font-size:10px;color:var(--muted)">${Math.round(pct*100)}%</span></div></td>
+      <td><span class="badge ${bCls}">${bIco} ${bTxt}</span></td>`;
+    tb.appendChild(tr);
+  });
+}
+
+// ── UPDATE KPIs ─────────────────────────────────────────────────────────
+function updateKPIs(data){
+  const t26  = data.reduce((s,n)=>s+n.hab26,0);
+  const t25  = data.reduce((s,n)=>s+n.hab25,0);
+  const rev26= data.reduce((s,n)=>s+n.rev26,0);
+  const revC25=data.reduce((s,n)=>s+n.cierre25*n.adrC25,0);
+  const cap  = data.length*CAP;
+  const delta= t26-t25;
+  const adr26= t26>0?(rev26/t26).toFixed(2).replace('.',','):'—';
+  const alerts=data.filter(n=>getSenal(n)==='rojo').length;
+
+  document.getElementById('kTotal').textContent = t26;
+  document.getElementById('kDelta').textContent = (delta>=0?'+':'')+delta+' vs posición 2025';
+  document.getElementById('kDelta').className   = 'kpi-sub '+(delta>=0?'up':'dn');
+  document.getElementById('kOcc').textContent   = cap>0?(t26/cap*100).toFixed(1)+'%':'0%';
+  document.getElementById('kOccRef').textContent= 'Ref. posición 2025: '+(cap>0?(t25/cap*100).toFixed(1)+'%':'0%');
+  document.getElementById('kRev').textContent   = rev26>0?(rev26/1000).toFixed(1)+'k€':'0€';
+  document.getElementById('kRevRef').textContent= 'Cierre 2025: '+(revC25/1000).toFixed(1)+'k€';
+  document.getElementById('kADR').textContent   = adr26+'€';
+  const totRevC25  = data.reduce((s,n)=>s+(n.cierre25*(n.adrC25||0)),0);
+  const totHabC25  = data.reduce((s,n)=>s+(n.cierre25||0),0);
+  const adrC25med  = totHabC25>0 ? (totRevC25/totHabC25).toFixed(2).replace('.',',') : '125,79';
+  if(document.getElementById('kADRRef'))
+    document.getElementById('kADRRef').textContent = 'vs cierre 2025: '+adrC25med+' €';
+  document.getElementById('kAlert').textContent = alerts;
+
+  const urg = data.filter(n=>getSenal(n)==='rojo').sort((a,b)=>(a.hab26-a.hab25)-(b.hab26-b.hab25));
+  const ul  = document.getElementById('urgList');
+  ul.innerHTML='';
+  urg.slice(0,5).forEach(n=>{
+    const d=n.hab26-n.hab25;
+    ul.innerHTML+=`<div class="urg-item">
+      <div><div class="urg-art">${n.artista}</div><div class="urg-fecha">${fmtDate(n.fecha)} (${n.dsem})</div></div>
+      <div style="text-align:right"><div style="font-weight:700;color:var(--red)">${n.hab26} hab</div><div style="font-size:10px;color:var(--muted)">${d} vs 2025</div></div>
+    </div>`;
+  });
+  document.getElementById('urgCount').textContent = urg.length+' noches';
+}
+
+// ── GRÁFICOS ────────────────────────────────────────────────────────────
+function renderChartEv(data){
+  if(chEv) chEv.destroy();
+  chEv = new Chart(document.getElementById('chEv').getContext('2d'),{
+    type:'bar',
+    data:{
+      labels:data.map(n=>fmtDate(n.fecha)),
+      datasets:[
+        {label:'Hab. 2026',data:data.map(n=>n.hab26),backgroundColor:'rgba(232,83,58,.88)',borderRadius:3,borderSkipped:false},
+        {label:'Pos. 2025 (misma fecha)',data:data.map(n=>n.hab25),backgroundColor:'rgba(128,144,176,.22)',borderRadius:3,borderSkipped:false},
+        {label:'Cierre real 2025',data:data.map(n=>n.cierre25),type:'line',tension:.3,
+         borderColor:'rgba(255,255,255,.4)',backgroundColor:'rgba(255,255,255,.04)',
+         pointBackgroundColor:'rgba(255,255,255,.55)',pointRadius:3,borderWidth:1.5},
+      ]
+    },
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{color:'#8090B0',font:{size:9,family:'Arial'},boxWidth:11,padding:8}},
+        tooltip:{backgroundColor:'#1A2050',borderColor:'rgba(255,255,255,.1)',borderWidth:1,
+          titleColor:'#fff',bodyColor:'#8090B0',
+          callbacks:{label:c=>' '+c.dataset.label+': '+c.parsed.y+' hab'}}},
+      scales:{
+        x:{ticks:{color:'#8090B0',font:{size:9},maxRotation:45},grid:{color:'rgba(255,255,255,.05)'}},
+        y:{ticks:{color:'#8090B0',font:{size:9}},grid:{color:'rgba(255,255,255,.05)'},min:0,max:16}
+      }}
+  });
+}
+
+function renderHistorico(){
+  const keys   = Object.keys(SNAPSHOTS);
+  const totals = keys.map(k=>SNAPSHOTS[k].noches.reduce((s,n)=>s+n.hab26,0));
+  if(chHist) chHist.destroy();
+  chHist = new Chart(document.getElementById('chHist').getContext('2d'),{
+    type:'line',
+    data:{labels:keys,datasets:[{
+      label:'Total hab.',data:totals,
+      borderColor:'#00C170',backgroundColor:'rgba(0,193,112,.1)',
+      tension:.4,pointBackgroundColor:'#00C170',pointRadius:5,fill:true
+    }]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},
+        tooltip:{backgroundColor:'#1A2050',titleColor:'#fff',bodyColor:'#8090B0',
+          callbacks:{label:c=>' '+c.parsed.y+' hab confirmadas'}}},
+      scales:{
+        x:{ticks:{color:'#8090B0',font:{size:9}},grid:{color:'rgba(255,255,255,.05)'}},
+        y:{ticks:{color:'#8090B0',font:{size:9}},grid:{color:'rgba(255,255,255,.05)'},min:0}
+      }}
+  });
+
+  const sl = document.getElementById('snapList');
+  sl.innerHTML='';
+  keys.forEach((k,i)=>{
+    const tot=totals[i], prev=i>0?totals[i-1]:null, d=prev!==null?tot-prev:null;
+    sl.innerHTML+=`<div class="snap-item" onclick="document.getElementById('fSnap').value='${k}';applyFilters()">
+      <span class="snap-date">${k}</span>
+      <span class="snap-val">${tot} hab</span>
+      <span style="font-size:10px;color:${d===null?'var(--muted)':d>=0?'var(--green)':'var(--red)'}">${d===null?'Base':(d>=0?'+':'')+d}</span>
+    </div>`;
+  });
+
+  const sel=document.getElementById('fSnap');
+  sel.innerHTML='';
+  keys.forEach(k=>{
+    sel.innerHTML+=`<option value="${k}"${k===keys[keys.length-1]?' selected':''}>${k}${k===keys[keys.length-1]?' (actual)':''}</option>`;
+  });
+}
+
+// ── FILTROS ─────────────────────────────────────────────────────────────
+function applyFilters(){
+  const snap=document.getElementById('fSnap').value;
+  const tipo=document.getElementById('fTipo').value;
+  const sen =document.getElementById('fSenal').value;
+  const ini =document.getElementById('fIni').value;
+  const fin =document.getElementById('fFin').value;
+  document.getElementById('lastUpdate').textContent=snap;
+  const noches=(SNAPSHOTS[snap]||{noches:[]}).noches;
+  const filtered=noches.filter(n=>{
+    if(n.fecha<ini||n.fecha>fin) return false;
+    if(tipo==='concierto'&&isSC(n.artista)) return false;
+    if(tipo==='sin'&&!isSC(n.artista)) return false;
+    if(tipo==='top'&&!ARTISTAS_TOP.has(n.artista)) return false;
+    const s=getSenal(n);
+    if(sen==='verde'&&s!=='verde') return false;
+    if(sen==='rojo'&&s!=='rojo') return false;
+    if(sen==='ambar'&&s!=='ambar') return false;
+    return true;
+  });
+  document.getElementById('fCount').textContent=filtered.length;
+  renderTable(filtered);
+  renderChartEv(filtered);
+  updateKPIs(filtered);
+}
+
+function resetFilters(){
+  document.getElementById('fTipo').value='todas';
+  document.getElementById('fSenal').value='todas';
+  document.getElementById('fIni').value='2026-07-31';
+  document.getElementById('fFin').value='2026-08-16';
+  const keys=Object.keys(SNAPSHOTS);
+  if(keys.length) document.getElementById('fSnap').value=keys[keys.length-1];
+  applyFilters();
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────
+window.addEventListener('load', async ()=>{
+  const ok = await loadFromSheets();
+  document.getElementById('loadingBlock').style.display='none';
+  document.getElementById('mainContent').style.display='block';
+  if(ok){
+    renderHistorico();
+    applyFilters();
+  }
+});
+</script>
+</body>
+</html>
